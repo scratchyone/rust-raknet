@@ -661,6 +661,37 @@ impl RaknetSocket {
         }
 
     }
+    
+    /// Recv a packet
+    /// 
+    /// # Example
+    /// ```ignore
+    /// let mut socket = RaknetSocket::connect("127.0.0.1:19132".parse().unwrap()).await.unwrap();
+    /// let buf = socket.recv().await.unwrap();
+    /// if buf[0] == 0xfe{
+    ///    //do something
+    /// }
+    /// ```
+    pub async fn try_recv(&mut self) -> Result<Option<Vec<u8>>> {
+
+        if !self.connected.load(Ordering::Relaxed){
+            return Err(RaknetError::ConnectionClosed);
+        }
+
+        match self.user_data_receiver.try_recv().await{
+            Ok(p) => Ok(Some(p)),
+            Err(tokio::sync::mpsc::error::TryRecvError::Empty) => {
+                Ok(None)
+            }
+            Err(_) => {
+                if !self.connected.load(Ordering::Relaxed){
+                    return Err(RaknetError::ConnectionClosed);
+                }
+                Err(RaknetError::RecvFromError)
+            },
+        }
+
+    }
 
     /// Returns the socket address of the remote peer of this Raknet connection.
     /// 
