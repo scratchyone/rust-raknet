@@ -678,7 +678,7 @@ impl RaknetSocket {
             return Err(RaknetError::ConnectionClosed);
         }
 
-        match self.user_data_receiver.try_recv().await{
+        match self.user_data_receiver.try_recv() {
             Ok(p) => Ok(Some(p)),
             Err(tokio::sync::mpsc::error::TryRecvError::Empty) => {
                 Ok(None)
