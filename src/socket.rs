@@ -13,7 +13,7 @@ pub struct RaknetSocket{
     local_addr : SocketAddr,
     peer_addr : SocketAddr,
     s : Arc<UdpSocket>,
-    user_data_receiver : Receiver<Vec<u8>>,
+    pub user_data_receiver : Receiver<Vec<u8>>,
     recvq : Arc<Mutex<RecvQ>>,
     sendq : Arc<Mutex<SendQ>>,
     connected : Arc<AtomicBool>,
