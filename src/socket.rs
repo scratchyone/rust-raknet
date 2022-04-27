@@ -672,7 +672,7 @@ impl RaknetSocket {
     ///    //do something
     /// }
     /// ```
-    pub async fn try_recv(&mut self) -> Result<Option<Vec<u8>>> {
+    pub fn try_recv(&mut self) -> Result<Option<Vec<u8>>> {
 
         if !self.connected.load(Ordering::Relaxed){
             return Err(RaknetError::ConnectionClosed);
@@ -684,7 +684,7 @@ impl RaknetSocket {
                 Ok(None)
             }
             Err(_) => {
-                if !self.connected.load(Ordering::Relaxed){
+                if !self.connected.load(Ordering::Relaxed) {
                     return Err(RaknetError::ConnectionClosed);
                 }
                 Err(RaknetError::RecvFromError)
